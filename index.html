@@ -1,25 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oxford 3000 Vocabulary Practice</title>
     <style>
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+button.playing {
+    animation: pulse 1s infinite; /* Áp dụng hiệu ứng nhấp nháy */
+    background-color: #ff4d4d; /* Đổi màu khi đang play */
+    color: white;
+}
+
+
+
+        :root {
+            --mcolor: #f4f4f4;
+            /* Màu nền chung */
+            --ccolor: #5e5e5e;
+
+            --ncolor: #e7e7e7;
+
+            --pcolor: #f8f8f8;
+
+            --tcolor: #000000;
+
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+
+            .progress-bar-container {
+                width: 100%;
+                height: 10px;
+                background-color: var(--pcolor);
+
+                border-radius: 5px;
+                overflow: hidden;
+                margin: 20px auto 0;
+                position: relative;
+                margin-bottom: 20px;
+            }
+
+
+            #progressBar {
+                width: 0%;
+                height: 100%;
+                background-color: var(--ncolor);
+                transition: width 0.1s linear;
+
+            }
+
+            .progress-bar-container2 {
+                width: 100%;
+                height: 10px;
+                background-color: var(--ncolor);
+
+                border-radius: 5px;
+                overflow: hidden;
+                margin: 20px auto 0;
+                position: relative;
+            }
+
+
+            #progressBar2 {
+                width: 0%;
+                height: 100%;
+                background-color: var(--pcolor);
+                transition: width 0.1s linear;
+            }
+
+            font-family: 'Times New Roman',
+            Times,
+            serif,
+            sans-serif;
+            background-color: var(--mcolor);
             text-align: center;
-            margin-top: 50px;
+
+            body {
+
+                .progress-bar-container {
+                    width: 100%;
+                    height: 10px;
+                    background-color: var(--pcolor);
+
+                    border-radius: 5px;
+                    overflow: hidden;
+                    margin: 20px auto 0;
+                    position: relative;
+                    margin-bottom: 20px;
+                }
+
+
+                #progressBar {
+                    width: 0%;
+                    height: 100%;
+                    background-color: var(--ncolor);
+                    transition: width 0.1s linear;
+
+                }
+
+                .progress-bar-container2 {
+                    width: 100%;
+                    height: 10px;
+                    background-color: var(--ncolor);
+
+                    border-radius: 5px;
+                    overflow: hidden;
+                    margin: 20px auto 0;
+                    position: relative;
+                }
+
+
+                #progressBar2 {
+                    width: 0%;
+                    height: 100%;
+                    background-color: var(--pcolor);
+                    transition: width 0.1s linear;
+                }
+
+                font-family: Arial,
+                sans-serif;
+                background-color: var(--mcolor);
+                text-align: center;
+                color: var(--tcolor);
+
+            }
+
+        }
+
+
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            /* Căn giữa toàn bộ vùng checkbox */
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .vowel-filters {
+            display: grid;
+            grid-template-columns: repeat(5, auto);
+            /* 4 cột tự động điều chỉnh */
+            gap: 5px 15px;
+            /* Giảm khoảng cách giữa hàng và cột */
+            align-items: center;
+            max-width: 400px;
+            /* Giữ checkbox không bị trải rộng */
+            padding: 10px;
+            background: var(--mcolor);
+            /* Màu nền nhẹ */
+            border-radius: 8px;
+
+        }
+
+        /* Làm chữ nguyên âm in đậm */
+        .vowel-filters label {
+            display: flex;
+            align-items: center;
+            /* Căn checkbox và text trên cùng một hàng */
+            gap: 8px;
+            /* Khoảng cách giữa checkbox và chữ */
+            font-size: 1.4em;
+            /* Phóng to chữ nguyên âm một chút */
+            color: var(--tcolor);
+        }
+
+        /* Tăng kích thước checkbox */
+        .vowel-checkbox {
+            transform: scale(1.3);
+            /* Phóng to checkbox */
+            cursor: pointer;
+            /* Đổi con trỏ thành hình bàn tay khi rê chuột */
         }
 
         .vocabulary-box {
-            font-size: 8vw; /* Tự động điều chỉnh chữ theo chiều rộng màn hình */
-            margin: 20px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            word-wrap: break-word;
+            font-size: 2vw;
+            /* Kích thước cơ bản */
+            color: var(--tcolor);
+        }
+
+        #word {
+            font-size: 2vw;
+            /* Từ vựng lớn hơn */
+            font-weight: bold;
+        }
+
+        #pronunciation {
+            font-size: 5vw;
+            /* Phiên âm trung bình */
+            color: rgb(189, 26, 26);
+        }
+
+        #pronunciation-vietnamese {
+            font-size: 2vw;
+            /* Phiên âm tiếng Việt nhỏ hơn */
         }
 
         .controls-buttons {
@@ -29,68 +210,156 @@
             margin-top: 20px;
         }
 
-        .controls-sliders {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
+        .controls-sliders input[type="range"] {
+            -webkit-appearance: none;
+            /* Xóa kiểu mặc định trên Chrome/Safari */
+            -moz-appearance: none;
+            /* Xóa kiểu mặc định trên Firefox */
+            appearance: none;
+            width: 100%;
+            /* Đảm bảo thanh trượt rộng toàn bộ */
+            height: 6px;
+            background: #ddd;
+            /* Màu mặc định của thanh trượt */
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s ease-in-out;
         }
 
-.control-group {
-    display: flex;                 /* Sử dụng flexbox để căn chỉnh các phần tử theo hàng ngang */
-    align-items: center;           /* Căn giữa các phần tử theo chiều dọc */
-    justify-content: flex-end;     /* Đẩy các phần tử ra phía bên phải */
-    gap: 15px;                     /* Khoảng cách giữa các phần tử */
-    width: 100%;                   /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
-}
+        /* Tùy chỉnh màu thanh trượt */
+        .controls-sliders input[type="range"]::-webkit-slider-runnable-track {
+            background: var(--ncolor);
+            /* Màu xanh dương */
+            height: 6px;
+            border-radius: 5px;
+        }
 
-.control-group label {
-    font-size: 1.1em;
-    margin-right: 10px;            /* Khoảng cách giữa label và các phần tử sau */
-    flex-shrink: 0;                /* Đảm bảo label không bị co lại */
-}
+        /* Tùy chỉnh màu nút kéo (thumb) */
+        .controls-sliders input[type="range"]::-webkit-slider-thumb {
+            background: var(--ccolor);
+            /* Màu đỏ */
+            width: 16px;
+            height: 16px;
+            border-radius: 10%;
+            cursor: pointer;
+            margin-top: -5px;
+            /* Điều chỉnh vị trí thumb */
+            -webkit-appearance: none;
+        }
 
-.control-group span {
-    font-size: 1.1em;
-    margin-right: 10px;            /* Khoảng cách giữa giá trị và slider */
-    flex-shrink: 0;                /* Đảm bảo giá trị không bị co lại */
-}
+        /* Hỗ trợ Firefox */
+        .controls-sliders input[type="range"]::-moz-range-track {
+            background: var(--ccolor);
+            height: 6px;
+            border-radius: 5px;
+        }
 
-/* Các input slider */
-.control-group input {
-    width: 60%;                    /* Slider chiếm 60% chiều rộng */
-    margin-left: auto;             /* Đẩy slider ra phía bên phải */
-}
+        .controls-sliders input[type="range"]::-moz-range-thumb {
+            background: var(--ncolor);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+            color: var(--tcolor);
+        }
+
+        .control-group label {
+            font-size: 1.1em;
+            margin-right: 10px;
+            flex-shrink: 0;
+            text-align: left;
+            min-width: 70px;
+            /* Đặt độ rộng tối thiểu */
+        }
+
+
+        .control-group span {
+            font-size: 1.1em;
+            text-align: right;
+            /* Khoảng cách giữa giá trị và slider */
+            flex-shrink: 0;
+            /* Đảm bảo giá trị không bị co lại */
+        }
+
+        /* Các input slider */
+        .control-group input {
+            width: 70%;
+            /* Slider chiếm 60% chiều rộng */
+            margin-left: auto;
+            /* Đẩy slider ra phía bên phải */
+        }
 
         button {
-            margin: 3px;
+            margin: 1px;
             padding: 30px 40px;
             font-size: 2em;
-            background-color: #bfd0ff;
-            color: white;
+            background-color: var(--mcolor);
+            color: var(--tcolor);
             border: none;
-            border-radius: 25px;
+            border-radius: 5px;
             cursor: pointer;
         }
 
         button.playing {
-            background-color: #ff4d4d;
+            background-color: var(--mcolor);
         }
 
         button:hover {
-            background-color: #50b9ff;
+            background-color: var(--mcolor);
+        }
+
+        .control-dropdown {
+            display: flex;
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+            justify-content: flex-start;
+            /* Căn label về phía trái */
+            gap: 10px;
+            /* Khoảng cách giữa label và dropdown */
+            width: 100%;
+            /* Đảm bảo nó chiếm toàn bộ hàng */
+            max-width: 400px;
+            /* Giới hạn chiều rộng tối đa */
+            margin: 0 auto;
+            /* Căn giữa cả nhóm control nếu cần */
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-dropdown label {
+            min-width: 15px;
+            /* Đảm bảo label có kích thước cố định */
+            text-align: left;
+            /* Căn phải để đồng bộ với các control khác */
+        }
+
+        #voiceSelect {
+            display: block;
+            /* Chuyển thành block để margin auto hoạt động */
+            margin-left: auto;
+            /* Căn giữa dropdown */
+            max-width: 390px;
+            padding: 5px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Vocabulary Box -->
-    <div class="vocabulary-box">
-        <div id="word" class="word">Word</div>
-        <div id="pronunciation" class="pronunciation">IPA Pronunciation</div>
-        <div id="pronunciation-vietnamese" class="pronunciation-vietnamese">Vietnamese Pronunciation</div>
-    </div>
 
     <!-- Nút điều khiển (Previous, Play, Next) -->
     <div class="controls-buttons">
@@ -99,32 +368,76 @@
         <button id="nextWord" class="button">▶</button>
     </div>
 
+    <!-- ProgressBar -->
+    <div class="progress-bar-container">
+        <div id="progressBar"></div>
+    </div>
+
+    <!-- Vocabulary Box -->
+    <div class="vocabulary-box">
+        <div id="word" class="word">Word</div>
+        <div id="pronunciation" class="pronunciation">IPA Pronunciation</div>
+        <div id="pronunciation-vietnamese" class="pronunciation-vietnamese">Vietnamese Pronunciation</div>
+
+    </div>
+
+    <!-- ProgressBar2 -->
+    <div class="progress-bar-container2">
+        <div id="progressBar2"></div>
+    </div>
+
+
+    <div class="filter-section">
+        <div class="vowel-filters">
+            <label><input type="checkbox" class="vowel-checkbox" value="aɪ"> aɪ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="eɪ"> eɪ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="iː"> iː</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ɔɪ"> ɔɪ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="oʊ"> oʊ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="uː"> uː</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="æ"> æ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ʊ"> ʊ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ɪ"> ɪ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ʌ"> ʌ</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ɜː"> ɜː</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ə"> ə</label>
+            <label><input type="checkbox" class="vowel-checkbox" value="ɑː"> ɑː</label>
+        </div>
+
+    </div>
+
+    <div class="control-dropdown">
+        <label for="voiceSelect">🙋‍♀️</label>
+        <select id="voiceSelect"></select>
+    </div>
+
+
     <!-- Các slider điều chỉnh kích thước chữ -->
     <div class="controls-sliders">
         <div class="control-group">
-            <label for="textSizeWordControl">Từ Vựng Size:</label>
-            <span id="textSizeWordValue">8</span> <!-- Hiển thị giá trị -->
-            <input type="range" id="textSizeWordControl" min="1" max="10" step="0.1" value="8">
-            
+            <label for="textSizeWordControl">Word</label>
+            <span id="textSizeWordValue">2</span> <!-- Hiển thị giá trị -->
+            <input type="range" id="textSizeWordControl" min="1" max="10" step="0.1" value="2">
+
         </div>
-    
+
         <div class="control-group">
-            <label for="textSizePronunciationControl">Phiên Âm Size:</label>
+            <label for="textSizePronunciationControl">IPA:</label>
             <span id="textSizePronunciationValue">5</span> <!-- Hiển thị giá trị -->
             <input type="range" id="textSizePronunciationControl" min="1" max="10" step="0.1" value="5">
         </div>
-    
+
         <div class="control-group">
-            <label for="textSizeVietnameseControl">Phiên Âm Tiếng Việt Size:</label>
-            <span id="textSizeVietnameseValue">5</span> <!-- Hiển thị giá trị -->
-            <input type="range" id="textSizeVietnameseControl" min="1" max="10" step="0.1" value="5">
-            
+            <label for="textSizeVietnameseControl">Vietlish:</label>
+            <span id="textSizeVietnameseValue">2</span> <!-- Hiển thị giá trị -->
+            <input type="range" id="textSizeVietnameseControl" min="1" max="10" step="0.1" value="2">
+
         </div>
-    
+
         <div class="control-group">
             <label for="rateControl">Speed: </label>
-            <span id="rateValue">0.5</span> <!-- Hiển thị giá trị -->
-            <input type="range" id="rateControl" min="0.1" max="2" step="0.1" value="0.5">
+            <span id="rateValue">1</span> <!-- Hiển thị giá trị -->
+            <input type="range" id="rateControl" min="0.1" max="2" step="0.1" value="1">
         </div>
         <div class="control-group">
             <label for="volumeControl">Volume: </label>
@@ -132,21 +445,27 @@
             <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
         </div>
         <div class="control-group">
-            <label for="repeatControl">Repeat Count: </label>
+            <label for="repeatControl">Repeat: </label>
             <span id="repeatCountDisplay">1</span> <!-- Hiển thị giá trị -->
             <input type="range" id="repeatControl" min="1" max="5" step="1" value="1">
         </div>
         <div class="control-group">
-            <label for="displayTimeControl">Display Time (Seconds): </label>
+            <label for="displayTimeControl">Duration:</label>
             <span id="displayTimeDisplay">5</span> <!-- Hiển thị giá trị -->
             <input type="range" id="displayTimeControl" min="1" max="10" step="1" value="5">
         </div>
     </div>
-    
+
+    <button id="toggleDarkMode">🌘</button>
+
+
+    </div>
+
+
     <script>
         // Dữ liệu XML dưới dạng chuỗi bạn có thể sửa trực tiếp vào đây
         const xmlData = `
-       <words>
+<words>
 <entry>
 <word>a</word>
 <pronunciation>/eɪ/</pronunciation>
@@ -14999,6 +15318,60 @@
         let currentIndex = 0;
         let isPlaying = false;
         let interval;
+        let filteredWords = [];
+        let cancelSpeaking = false; // Biến kiểm soát việc hủy repeat
+        let speakID = 0; // ID của lần phát âm gần nhất
+
+
+
+        // Lắng nghe sự kiện khi người dùng tick/bỏ tick checkbox
+        document.querySelectorAll('.vowel-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', filterWords);
+        });
+
+        function startProgressBar(duration) {
+            const progressBar = document.getElementById('progressBar');
+            const progressBar2 = document.getElementById('progressBar2');
+
+            // Reset về 0% trước khi bắt đầu
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            progressBar2.style.transition = 'none';
+            progressBar2.style.width = '100%';
+
+            // Dùng `setTimeout` để đảm bảo reset xong rồi mới chạy
+            setTimeout(() => {
+                progressBar.style.transition = `width ${duration}s linear`; // Tạo hiệu ứng chạy
+                progressBar.style.width = '100%';  // Chạy đến 100% trong thời gian `duration`
+                progressBar2.style.transition = `width ${duration}s linear`; // Tạo hiệu ứng chạy
+                progressBar2.style.width = '0%';  // Chạy đến 100% trong thời gian `duration`
+            }, 50);
+        }
+
+
+
+        function filterWords() {
+            const checkedVowels = Array.from(document.querySelectorAll('.vowel-checkbox:checked'))
+                .map(cb => cb.value); // Lấy danh sách nguyên âm đã chọn
+
+            if (checkedVowels.length === 0) {
+                filteredWords = words; // Nếu không chọn gì, giữ nguyên danh sách gốc
+            } else {
+                // Lọc danh sách chỉ chứa từ có nguyên âm đã chọn
+                filteredWords = words.filter(entry => {
+                    return checkedVowels.some(vowel => entry.pronunciation.includes(vowel));
+                });
+            }
+
+            // Nếu đang chạy auto-play, cập nhật danh sách từ mới
+            if (isPlaying) {
+                clearInterval(interval);
+                interval = setInterval(() => {
+                    currentIndex = Math.floor(Math.random() * filteredWords.length);
+                    updateWord();
+                }, parseInt(document.getElementById('displayTimeControl').value) * 1000);
+            }
+        }
 
         // Phân tích XML
         function parseXML(xmlText) {
@@ -15020,58 +15393,130 @@
 
         // Cập nhật từ mới
         function updateWord() {
-            const wordObj = words[currentIndex];
+            if (filteredWords.length === 0) {
+                filteredWords = words; // Nếu chưa lọc, dùng toàn bộ từ
+            }
+            currentIndex = Math.floor(Math.random() * filteredWords.length);
+            const wordObj = filteredWords[currentIndex];
+
             document.getElementById('word').textContent = wordObj.word;
             document.getElementById('pronunciation').textContent = wordObj.pronunciation;
             document.getElementById('pronunciation-vietnamese').textContent = wordObj.vietnamese;
             readWord(wordObj.word);
 
-            // Lưu từ vào lịch sử
-            history.push(wordObj);
-            if (history.length > 5) history.shift();
+            // Lấy thời gian hiển thị từ slider và bắt đầu thanh tiến trình
+            let displayTime = parseInt(document.getElementById('displayTimeControl').value);
+            startProgressBar(displayTime);
         }
 
-        // Đọc từ
-        function readWord(word) {
-            window.speechSynthesis.cancel();
-            const repeatCount = 1;
-            const msg = new SpeechSynthesisUtterance(word);
-            msg.rate = 0.8;
-            msg.volume = 1;
-            msg.lang = 'en-US';
 
+        // Lấy danh sách giọng đọc có sẵn trên máy
+        function populateVoices() {
+            const voiceSelect = document.getElementById('voiceSelect');
+            const voices = window.speechSynthesis.getVoices();
+
+            // Xóa các option cũ để tránh trùng lặp
+            voiceSelect.innerHTML = '';
+
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index; // Dùng index để tham chiếu giọng
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        // Cập nhật danh sách giọng khi trình duyệt load
+        if ('speechSynthesis' in window) {
+            populateVoices(); // Gọi hàm ngay khi trang tải
+            window.speechSynthesis.onvoiceschanged = populateVoices; // Cập nhật nếu có thay đổi
+        }
+
+        // Hàm sleep dùng Promise để chờ một khoảng thời gian (ms)
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Hàm đọc từ có thêm sleep giữa các lần repeat
+        async function readWord(word) {
+            window.speechSynthesis.cancel();
+            const currentSpeakID = ++speakID; // Tạo ID mới cho lần phát âm này
+
+            const repeatCount = parseInt(document.getElementById('repeatControl').value);
+            const displayTime = parseInt(document.getElementById('displayTimeControl').value);
+            const sleepTime = (displayTime * 1000) / repeatCount;
+
+            const msg = new SpeechSynthesisUtterance(word);
+
+            // Lấy tốc độ và âm lượng từ slider
+            msg.rate = parseFloat(document.getElementById('rateControl').value);
+            msg.volume = parseFloat(document.getElementById('volumeControl').value);
+
+            // Lấy giọng đã chọn từ dropdown
+            const selectedVoiceIndex = document.getElementById('voiceSelect').value;
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                msg.voice = voices[selectedVoiceIndex];
+            }
+
+            // Lặp lại số lần đọc từ, có delay giữa các lần đọc
             for (let i = 0; i < repeatCount; i++) {
+                if (currentSpeakID !== speakID) return; // Nếu speakID bị thay đổi, dừng ngay lập tức
                 window.speechSynthesis.speak(msg);
+                await sleep(sleepTime); // Chờ sleepTime trước khi đọc tiếp
             }
         }
 
+
         // Lắng nghe sự kiện Play/Pause
-document.getElementById('playPause').addEventListener('click', () => {
-    const playButton = document.getElementById('playPause');
-    if (isPlaying) {
-        isPlaying = false;
-        playButton.textContent = '💬';
-        playButton.classList.remove('playing');
-        clearInterval(interval);
-    } else {
-        isPlaying = true;
-        playButton.textContent = '✦';
-        playButton.classList.add('playing');
-        interval = setInterval(() => {
+        // Lắng nghe sự kiện Play/Pause
+        document.getElementById('playPause').addEventListener('click', () => {
+            const playButton = document.getElementById('playPause');
+            let displayTime = parseInt(document.getElementById('displayTimeControl').value) * 1000; // Lấy thời gian hiển thị
+
+            if (isPlaying) {
+                isPlaying = false;
+                playButton.textContent = '💬';
+                playButton.classList.remove('playing');
+                clearInterval(interval);
+            } else {
+                isPlaying = true;
+                playButton.textContent = '💬';
+                playButton.classList.add('playing');
+
+                // Gọi từ mới ngay lập tức khi bấm Play
+                updateWord();
+
+                // Sau đó bắt đầu chạy setInterval để hiển thị từ tiếp theo
+                interval = setInterval(() => {
+                    currentIndex = Math.floor(Math.random() * words.length);
+                    updateWord();
+                }, displayTime);
+            }
+        });
+
+
+        // Lắng nghe sự kiện thay đổi thời gian hiển thị
+        document.getElementById('displayTimeControl').addEventListener('input', (e) => {
+            document.getElementById('displayTimeDisplay').textContent = e.target.value;
+            if (isPlaying) {
+                clearInterval(interval);
+                let displayTime = parseInt(e.target.value) * 1000;
+                interval = setInterval(() => {
+                    currentIndex = Math.floor(Math.random() * words.length);
+                    updateWord();
+                }, displayTime);
+            }
+        });
+        // Lắng nghe sự kiện Next Word
+        document.getElementById('nextWord').addEventListener('click', () => {
+            speakID++; // Thay đổi speakID để hủy repeat của từ cũ
+            window.speechSynthesis.cancel(); // Hủy ngay lập tức tất cả âm thanh đang chạy
+
             // Chọn một từ ngẫu nhiên từ mảng words
             currentIndex = Math.floor(Math.random() * words.length);
             updateWord();
-        }, 5000); // Mỗi 5 giây, cập nhật từ mới
-    }
-});
-
-
-// Lắng nghe sự kiện Next Word
-document.getElementById('nextWord').addEventListener('click', () => {
-    // Chọn một từ ngẫu nhiên từ mảng words
-    currentIndex = Math.floor(Math.random() * words.length);
-    updateWord();
-});
+        });
 
 
         // Lắng nghe sự kiện Previous Word
@@ -15087,38 +15532,37 @@ document.getElementById('nextWord').addEventListener('click', () => {
             }
         });
 
-// Lắng nghe sự kiện thay đổi giá trị slider và cập nhật giá trị hiển thị
-document.getElementById('textSizeWordControl').addEventListener('input', (e) => {
-    document.getElementById('word').style.fontSize = `${e.target.value}vw`;
-    document.getElementById('textSizeWordValue').textContent = e.target.value; // Hiển thị giá trị
-});
+        // Lắng nghe sự kiện thay đổi giá trị slider và cập nhật giá trị hiển thị
+        document.getElementById('textSizeWordControl').addEventListener('input', (e) => {
+            document.getElementById('word').style.fontSize = `${e.target.value}vw`;
+            document.getElementById('textSizeWordValue').textContent = e.target.value; // Hiển thị giá trị
+        });
 
-document.getElementById('textSizePronunciationControl').addEventListener('input', (e) => {
-    document.getElementById('pronunciation').style.fontSize = `${e.target.value}vw`;
-    document.getElementById('pronunciation-vietnamese').style.fontSize = `${e.target.value}vw`;
-    document.getElementById('textSizePronunciationValue').textContent = e.target.value; // Hiển thị giá trị
-});
+        document.getElementById('textSizePronunciationControl').addEventListener('input', (e) => {
+            document.getElementById('pronunciation').style.fontSize = `${e.target.value}vw`;
+            document.getElementById('textSizePronunciationValue').textContent = e.target.value; // Hiển thị giá trị
+        });
 
-document.getElementById('textSizeVietnameseControl').addEventListener('input', (e) => {
-    document.getElementById('pronunciation-vietnamese').style.fontSize = `${e.target.value}vw`;
-    document.getElementById('textSizeVietnameseValue').textContent = e.target.value; // Hiển thị giá trị
-});
+        document.getElementById('textSizeVietnameseControl').addEventListener('input', (e) => {
+            document.getElementById('pronunciation-vietnamese').style.fontSize = `${e.target.value}vw`;
+            document.getElementById('textSizeVietnameseValue').textContent = e.target.value; // Hiển thị giá trị
+        });
 
-document.getElementById('rateControl').addEventListener('input', (e) => {
-    document.getElementById('rateValue').textContent = e.target.value; // Hiển thị giá trị
-});
+        document.getElementById('rateControl').addEventListener('input', (e) => {
+            document.getElementById('rateValue').textContent = e.target.value; // Hiển thị giá trị
+        });
 
-document.getElementById('volumeControl').addEventListener('input', (e) => {
-    document.getElementById('volumeValue').textContent = e.target.value; // Hiển thị giá trị
-});
+        document.getElementById('volumeControl').addEventListener('input', (e) => {
+            document.getElementById('volumeValue').textContent = e.target.value; // Hiển thị giá trị
+        });
 
-document.getElementById('repeatControl').addEventListener('input', (e) => {
-    document.getElementById('repeatCountDisplay').textContent = e.target.value; // Hiển thị giá trị
-});
+        document.getElementById('repeatControl').addEventListener('input', (e) => {
+            document.getElementById('repeatCountDisplay').textContent = e.target.value; // Hiển thị giá trị
+        });
 
-document.getElementById('displayTimeControl').addEventListener('input', (e) => {
-    document.getElementById('displayTimeDisplay').textContent = e.target.value; // Hiển thị giá trị
-});
+        document.getElementById('displayTimeControl').addEventListener('input', (e) => {
+            document.getElementById('displayTimeDisplay').textContent = e.target.value; // Hiển thị giá trị
+        });
 
 
         // Phân tích XML dữ liệu nhập và cập nhật từ
@@ -15126,8 +15570,107 @@ document.getElementById('displayTimeControl').addEventListener('input', (e) => {
 
         // Bắt đầu với một từ ngẫu nhiên khi trang tải
         updateWord();
+        function changeTheme(mColor, tColor) {
+            document.documentElement.style.setProperty('--mcolor', mColor); // Đổi màu nền
+            document.documentElement.style.setProperty('--tcolor', tColor); // Đổi màu chữ
+            localStorage.setItem('theme', JSON.stringify({ mColor, tColor })); // Lưu vào localStorage
+        }
+
+        // Danh sách các slider cần lưu
+        const settings = [
+            { id: "textSizeWordControl", valueSpan: "textSizeWordValue", cssTarget: "word", cssProperty: "fontSize", unit: "vw" },
+            { id: "textSizePronunciationControl", valueSpan: "textSizePronunciationValue", cssTarget: "pronunciation", cssProperty: "fontSize", unit: "vw" },
+            { id: "textSizeVietnameseControl", valueSpan: "textSizeVietnameseValue", cssTarget: "pronunciation-vietnamese", cssProperty: "fontSize", unit: "vw" },
+            { id: "rateControl", valueSpan: "rateValue" },
+            { id: "volumeControl", valueSpan: "volumeValue" },
+            { id: "repeatControl", valueSpan: "repeatCountDisplay" },
+            { id: "displayTimeControl", valueSpan: "displayTimeDisplay" }
+        ];
+
+        // Hàm lưu giá trị khi người dùng thay đổi
+        function saveSetting(id, value) {
+            localStorage.setItem(id, value);
+        }
+
+        // Lặp qua danh sách sliders để gán sự kiện thay đổi
+        settings.forEach(setting => {
+            const slider = document.getElementById(setting.id);
+            const displaySpan = document.getElementById(setting.valueSpan);
+
+            slider.addEventListener("input", (e) => {
+                const value = e.target.value;
+                displaySpan.textContent = value; // Cập nhật giá trị hiển thị
+
+                // Nếu có cssTarget, cập nhật CSS (cho font-size)
+                if (setting.cssTarget) {
+                    document.getElementById(setting.cssTarget).style[setting.cssProperty] = `${value}${setting.unit || ""}`;
+                }
+
+                // Lưu vào localStorage
+                saveSetting(setting.id, value);
+            });
+        });
+
+        // Lưu lựa chọn giọng đọc
+        const voiceSelect = document.getElementById("voiceSelect");
+        voiceSelect.addEventListener("change", () => {
+            localStorage.setItem("selectedVoice", voiceSelect.value);
+        });
+
+        // Hàm khôi phục cài đặt từ localStorage
+        function loadSettings() {
+            settings.forEach(setting => {
+                const savedValue = localStorage.getItem(setting.id);
+                if (savedValue !== null) {
+                    const slider = document.getElementById(setting.id);
+                    const displaySpan = document.getElementById(setting.valueSpan);
+
+                    slider.value = savedValue;
+                    displaySpan.textContent = savedValue;
+
+                    // Nếu có cssTarget, cập nhật CSS (cho font-size)
+                    if (setting.cssTarget) {
+                        document.getElementById(setting.cssTarget).style[setting.cssProperty] = `${savedValue}${setting.unit || ""}`;
+                    }
+                }
+            });
+
+            // Khôi phục giọng đọc nếu có
+            const savedVoice = localStorage.getItem("selectedVoice");
+            if (savedVoice) {
+                voiceSelect.value = savedVoice;
+            }
+        }
+
+        // Gọi loadSettings khi trang tải lại
+        window.addEventListener("DOMContentLoaded", loadSettings);
+
+
+        // Sự kiện khi nhấn nút
+        document.getElementById('toggleDarkMode').addEventListener('click', () => {
+            let currentColor = getComputedStyle(document.documentElement).getPropertyValue('--mcolor').trim();
+            let button = document.getElementById('toggleDarkMode');
+
+            if (currentColor === '#000') {
+                changeTheme('#f4f4f4', '#333'); // Nền sáng, chữ tối
+                button.textContent = "🌘";
+            } else {
+                changeTheme('#000', '#fff'); // Nền tối, chữ sáng
+                button.textContent = "🌔";
+            }
+        });
+
+        // Khi tải lại trang, áp dụng theme đã lưu
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                let { mColor, tColor } = JSON.parse(savedTheme);
+                changeTheme(mColor, tColor);
+            }
+        });
 
     </script>
 
 </body>
+
 </html>
