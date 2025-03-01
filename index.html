@@ -15313,7 +15313,7 @@ button.playing {
 </entry>
 </words>`;
 
-        let words = [];
+let words = [];
         let history = [];
         let currentIndex = 0;
         let isPlaying = false;
@@ -15458,7 +15458,7 @@ if ('speechSynthesis' in window) {
         }
 
         // Hàm đọc từ có thêm sleep giữa các lần repeat
-        function readWord(word) {
+        async function readWord(word) {
     let utterance = new SpeechSynthesisUtterance(word);
     let selectedVoiceName = document.getElementById("voiceSelect").value;
     let voices = speechSynthesis.getVoices();
@@ -15478,8 +15478,18 @@ if ('speechSynthesis' in window) {
     utterance.rate = parseFloat(document.getElementById('rateControl').value);
     utterance.volume = parseFloat(document.getElementById('volumeControl').value);
 
-    speechSynthesis.cancel(); // Dừng giọng trước đó nếu có
-    speechSynthesis.speak(utterance);
+    // Lấy số lần repeat
+    let repeatCount = parseInt(document.getElementById('repeatControl').value);
+    let delayBetweenRepeats = parseInt(document.getElementById('displayTimeControl').value) * 1000 / repeatCount;
+
+    // Hủy giọng nói trước đó để tránh chồng lặp
+    speechSynthesis.cancel();
+    
+    for (let i = 0; i < repeatCount; i++) {
+        if (!isPlaying) return; // Nếu bấm dừng, thoát khỏi repeat
+        speechSynthesis.speak(utterance);
+        await sleep(delayBetweenRepeats); // Đợi trước khi đọc lần tiếp theo
+    }
 }
 
 
