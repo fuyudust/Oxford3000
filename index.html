@@ -6,17 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oxford 3000 Vocabulary Practice</title>
     <style>
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-}
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
 
-button.playing {
-    animation: pulse 1s infinite; /* Áp dụng hiệu ứng nhấp nháy */
-    background-color: #ff4d4d; /* Đổi màu khi đang play */
-    color: white;
-}
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        button.playing {
+            animation: pulse 2s infinite;
+            /* Áp dụng hiệu ứng nhấp nháy */
+            background-color: #ff4d4d;
+            /* Đổi màu khi đang play */
+            color: rgb(255, 0, 0);
+        }
 
 
 
@@ -417,23 +430,23 @@ button.playing {
         <div class="control-group">
             <label for="textSizeWordControl">Word</label>
             <span id="textSizeWordValue">2</span> <!-- Hiển thị giá trị -->
-            <input type="range" id="textSizeWordControl" min="1" max="10" step="0.1" value="2">
+            <input type="range" id="textSizeWordControl" min="1" max="20" step="0.1" value="2">
 
         </div>
 
         <div class="control-group">
             <label for="textSizePronunciationControl">IPA:</label>
             <span id="textSizePronunciationValue">5</span> <!-- Hiển thị giá trị -->
-            <input type="range" id="textSizePronunciationControl" min="1" max="10" step="0.1" value="5">
+            <input type="range" id="textSizePronunciationControl" min="1" max="20" step="0.1" value="5">
         </div>
 
         <div class="control-group">
             <label for="textSizeVietnameseControl">Vietlish:</label>
             <span id="textSizeVietnameseValue">2</span> <!-- Hiển thị giá trị -->
-            <input type="range" id="textSizeVietnameseControl" min="1" max="10" step="0.1" value="2">
+            <input type="range" id="textSizeVietnameseControl" min="1" max="20" step="0.1" value="2">
 
         </div>
-
+<br><br>
         <div class="control-group">
             <label for="rateControl">Speed: </label>
             <span id="rateValue">1</span> <!-- Hiển thị giá trị -->
@@ -15313,7 +15326,7 @@ button.playing {
 </entry>
 </words>`;
 
-let words = [];
+        let words = [];
         let history = [];
         let currentIndex = 0;
         let isPlaying = false;
@@ -15392,64 +15405,78 @@ let words = [];
         }
 
         // Cập nhật từ mới
-        function updateWord() {
+        function updateWord(playAudio = true) {
             if (filteredWords.length === 0) {
                 filteredWords = words; // Nếu chưa lọc, dùng toàn bộ từ
             }
+
             currentIndex = Math.floor(Math.random() * filteredWords.length);
             const wordObj = filteredWords[currentIndex];
+
+               // Thêm từ mới vào danh sách lịch sử (tối đa 5 từ)
+    history.push(wordObj);
+    if (history.length > 5) {
+        history.shift(); // Xóa từ cũ nhất nếu vượt quá 5 từ
+    }
 
             document.getElementById('word').textContent = wordObj.word;
             document.getElementById('pronunciation').textContent = wordObj.pronunciation;
             document.getElementById('pronunciation-vietnamese').textContent = wordObj.vietnamese;
-            readWord(wordObj.word);
 
-            // Lấy thời gian hiển thị từ slider và bắt đầu thanh tiến trình
-            let displayTime = parseInt(document.getElementById('displayTimeControl').value);
-            startProgressBar(displayTime);
+            // Luôn phát âm thanh nếu playAudio = true (khi bấm "Next")
+            if (playAudio) {
+                readWord(wordObj.word, true); // Truyền `true` để ép phát âm thanh khi nhấn "Next"
+            }
+
+            // Nếu auto-play đang chạy, cập nhật thanh tiến trình
+            if (isPlaying) {
+                let displayTime = parseInt(document.getElementById('displayTimeControl').value);
+                startProgressBar(displayTime);
+            }
         }
+
         function populateVoices() {
-    const voiceSelect = document.getElementById('voiceSelect');
-    let voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            let voices = speechSynthesis.getVoices();
 
-    // Nếu danh sách giọng nói chưa tải xong, thử lại sau một thời gian ngắn
-    if (voices.length === 0) {
-        setTimeout(populateVoices, 200);
-        return;
-    }
+            // Nếu danh sách giọng nói chưa tải xong, thử lại sau một thời gian ngắn
+            if (voices.length === 0) {
+                setTimeout(populateVoices, 200);
+                return;
+            }
 
-    // Xóa danh sách cũ để tránh trùng lặp
-    voiceSelect.innerHTML = '';
+            // Xóa danh sách cũ để tránh trùng lặp
+            voiceSelect.innerHTML = '';
 
-    // Lọc chỉ lấy giọng tiếng Anh
-    const englishVoices = voices.filter(voice => voice.lang.startsWith("en"));
+            // Lọc chỉ lấy giọng tiếng Anh
+            const englishVoices = voices.filter(voice => voice.lang.startsWith("en"));
 
-    // Nếu không có giọng tiếng Anh, hiển thị thông báo
-    if (englishVoices.length === 0) {
-        const option = document.createElement('option');
-        option.textContent = "Không tìm thấy giọng tiếng Anh!";
-        option.disabled = true;
-        voiceSelect.appendChild(option);
-        return;
-    }
+            // Nếu không có giọng tiếng Anh, hiển thị thông báo
+            if (englishVoices.length === 0) {
+                const option = document.createElement('option');
+                option.textContent = "Không tìm thấy giọng tiếng Anh!";
+                option.disabled = true;
+                voiceSelect.appendChild(option);
+                return;
+            }
 
-    // Thêm giọng vào dropdown
-    englishVoices.forEach(voice => {
-        const option = document.createElement('option');
-        option.value = voice.name;
-        option.textContent = `${voice.name} (${voice.lang})`;
-        voiceSelect.appendChild(option);
-    });
+            // Thêm giọng vào dropdown
+            englishVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
 
-    // Đặt giá trị mặc định là giọng đầu tiên trong danh sách
-    voiceSelect.value = englishVoices[0].name;
-}
+            // Đặt giá trị mặc định là giọng đầu tiên trong danh sách
+            voiceSelect.value = englishVoices[0].name;
+        }
 
-// Đợi danh sách giọng đọc tải xong rồi mới chạy populateVoices
-if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = populateVoices;
-    setTimeout(populateVoices, 500); // Đảm bảo danh sách tải đầy đủ
-}
+        // Đợi danh sách giọng đọc tải xong rồi mới chạy populateVoices
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = populateVoices;
+            setTimeout(populateVoices, 500); // Đảm bảo danh sách tải đầy đủ
+        }
 
 
         // Hàm sleep dùng Promise để chờ một khoảng thời gian (ms)
@@ -15458,41 +15485,44 @@ if ('speechSynthesis' in window) {
         }
 
         // Hàm đọc từ có thêm sleep giữa các lần repeat
-        async function readWord(word) {
-    let utterance = new SpeechSynthesisUtterance(word);
-    let selectedVoiceName = document.getElementById("voiceSelect").value;
-    let voices = speechSynthesis.getVoices();
+        async function readWord(word, forcePlay = false) {
+            let utterance = new SpeechSynthesisUtterance(word);
+            let selectedVoiceName = document.getElementById("voiceSelect").value;
+            let voices = speechSynthesis.getVoices();
 
-    // Tìm giọng nói theo tên đã chọn
-    let selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+            // Tìm giọng nói theo tên đã chọn
+            let selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
 
-    // Gán giọng nếu tìm thấy
-    if (selectedVoice) {
-        utterance.voice = selectedVoice;
-    } else {
-        console.warn("Không tìm thấy giọng đã chọn, sử dụng giọng mặc định.");
-    }
+            // Gán giọng nếu tìm thấy
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            } else {
+                console.warn("Không tìm thấy giọng đã chọn, sử dụng giọng mặc định.");
+            }
 
-    // Cố gắng ép giọng sang tiếng Anh
-    utterance.lang = "en-US";
-    utterance.rate = parseFloat(document.getElementById('rateControl').value);
-    utterance.volume = parseFloat(document.getElementById('volumeControl').value);
+            // Cố gắng ép giọng sang tiếng Anh
+            utterance.lang = "en-US";
+            utterance.rate = parseFloat(document.getElementById('rateControl').value);
+            utterance.volume = parseFloat(document.getElementById('volumeControl').value);
 
-    // Lấy số lần repeat
-    let repeatCount = parseInt(document.getElementById('repeatControl').value);
-    let delayBetweenRepeats = parseInt(document.getElementById('displayTimeControl').value) * 1000 / repeatCount;
+            // Lấy số lần repeat
+            let repeatCount = parseInt(document.getElementById('repeatControl').value);
+            let delayBetweenRepeats = parseInt(document.getElementById('displayTimeControl').value) * 1000 / repeatCount;
+            let currentSpeakID = ++speakID; // Tạo ID mới cho lần đọc này
 
-    // Hủy giọng nói trước đó để tránh chồng lặp
-    speechSynthesis.cancel();
-    
-    for (let i = 0; i < repeatCount; i++) {
-        if (!isPlaying) return; // Nếu bấm dừng, thoát khỏi repeat
-        speechSynthesis.speak(utterance);
-        await sleep(delayBetweenRepeats); // Đợi trước khi đọc lần tiếp theo
-    }
-}
+            // Hủy giọng nói trước đó để tránh chồng lặp
+            speechSynthesis.cancel();
+
+            for (let i = 0; i < repeatCount; i++) {
+                // Nếu isPlaying = false nhưng forcePlay = true (nhấn "Next"), vẫn phát âm thanh
+                if (!isPlaying && !forcePlay) return;
+                speechSynthesis.speak(utterance);
+                await sleep(delayBetweenRepeats); // Đợi trước khi đọc lại
+                if (currentSpeakID !== speakID) return; // Kiểm tra lại nếu từ mới được load
 
 
+            }
+        }
         // Lắng nghe sự kiện Play/Pause
         document.getElementById('playPause').addEventListener('click', () => {
             const playButton = document.getElementById('playPause');
@@ -15536,10 +15566,9 @@ if ('speechSynthesis' in window) {
         document.getElementById('nextWord').addEventListener('click', () => {
             speakID++; // Thay đổi speakID để hủy repeat của từ cũ
             window.speechSynthesis.cancel(); // Hủy ngay lập tức tất cả âm thanh đang chạy
-
             // Chọn một từ ngẫu nhiên từ mảng words
             currentIndex = Math.floor(Math.random() * words.length);
-            updateWord();
+            updateWord(true); // Luôn cập nhật từ mới và phát âm thanh
         });
 
 
