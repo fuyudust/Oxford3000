@@ -15408,29 +15408,37 @@ button.playing {
             let displayTime = parseInt(document.getElementById('displayTimeControl').value);
             startProgressBar(displayTime);
         }
+// Lấy danh sách giọng đọc có sẵn trên máy, chỉ lọc giọng tiếng Anh
+function populateVoices() {
+    const voiceSelect = document.getElementById('voiceSelect');
+    const voices = window.speechSynthesis.getVoices();
 
+    // Xóa danh sách cũ để tránh trùng lặp
+    voiceSelect.innerHTML = '';
 
-        // Lấy danh sách giọng đọc có sẵn trên máy
-        function populateVoices() {
-            const voiceSelect = document.getElementById('voiceSelect');
-            const voices = window.speechSynthesis.getVoices();
+    // Lọc chỉ lấy các giọng tiếng Anh
+    const englishVoices = voices.filter(voice => voice.lang.startsWith("en"));
 
-            // Xóa các option cũ để tránh trùng lặp
-            voiceSelect.innerHTML = '';
+    // Thêm giọng vào dropdown
+    englishVoices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index; // Dùng index để tham chiếu giọng
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.appendChild(option);
+    });
 
-            voices.forEach((voice, index) => {
-                const option = document.createElement('option');
-                option.value = index; // Dùng index để tham chiếu giọng
-                option.textContent = `${voice.name} (${voice.lang})`;
-                voiceSelect.appendChild(option);
-            });
-        }
+    // Nếu có giọng Anh, chọn giọng đầu tiên mặc định
+    if (englishVoices.length > 0) {
+        voiceSelect.value = 0;
+    }
+}
 
-        // Cập nhật danh sách giọng khi trình duyệt load
-        if ('speechSynthesis' in window) {
-            populateVoices(); // Gọi hàm ngay khi trang tải
-            window.speechSynthesis.onvoiceschanged = populateVoices; // Cập nhật nếu có thay đổi
-        }
+// Cập nhật danh sách giọng khi trình duyệt load
+if ('speechSynthesis' in window) {
+    populateVoices(); // Gọi hàm ngay khi trang tải
+    window.speechSynthesis.onvoiceschanged = populateVoices; // Cập nhật nếu có thay đổi
+}
+
 
         // Hàm sleep dùng Promise để chờ một khoảng thời gian (ms)
         function sleep(ms) {
@@ -15467,8 +15475,6 @@ button.playing {
             }
         }
 
-
-        // Lắng nghe sự kiện Play/Pause
         // Lắng nghe sự kiện Play/Pause
         document.getElementById('playPause').addEventListener('click', () => {
             const playButton = document.getElementById('playPause');
